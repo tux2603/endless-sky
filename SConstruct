@@ -17,7 +17,7 @@ if 'SCHROOT_CHROOT_NAME' in os.environ and 'steamrt' in os.environ['SCHROOT_CHRO
 opts = Variables()
 opts.Add(PathVariable("PREFIX", "Directory to install under", "/usr/local", PathVariable.PathIsDirCreate))
 opts.Add(PathVariable("DESTDIR", "Destination root directory", "", PathVariable.PathAccept))
-opts.Add(EnumVariable("mode", "Compilation mode", "release", allowed_values=("release", "debug", "profile")))
+opts.Add(EnumVariable("mode", "Compilation mode", "release", allowed_values=("release", "debug", "profile", "paranoia")))
 opts.Add(PathVariable("BUILDDIR", "Build directory", "build", PathVariable.PathIsDirCreate))
 opts.Update(env)
 
@@ -31,6 +31,9 @@ if env["mode"] == "debug":
 if env["mode"] == "profile":
 	flags += ["-pg"]
 	env.Append(LINKFLAGS = ["-pg"])
+if env["mode"] == "paranoia":
+	flags += ["-ggdb", "-pg", "-Wextra", "-Wpedantic", "-Wno-unused-parameter"]
+	env.Append(LINKFLAGS = ["-pg"])
 
 # Required build flags. If you want to use SSE optimization, you can turn on
 # -msse3 or (if just building for your own computer) -march=native.
@@ -43,7 +46,7 @@ env.Append(LIBS = [
 	"GLEW",
 	"openal",
 	"pthread"
-]);
+])
 # libmad is not in the Steam runtime, so link it statically:
 if 'SCHROOT_CHROOT_NAME' in os.environ and 'steamrt_scout_i386' in os.environ['SCHROOT_CHROOT_NAME']:
 	env.Append(LIBS = File("/usr/lib/i386-linux-gnu/libmad.a"))
