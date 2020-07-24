@@ -52,3 +52,7 @@ ipch/
 *.userosscache
 *.sln.docstates
 *.xcodeproj/**
+
+# Profiling and debugging tools
+gmon.out
+callgrind.out.*
