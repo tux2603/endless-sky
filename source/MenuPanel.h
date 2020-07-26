@@ -31,6 +31,7 @@ public:
 	MenuPanel(PlayerInfo &player, UI &gamePanels);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	// New player "conversation" callback.
@@ -47,7 +48,7 @@ private:
 	UI &gamePanels;
 	
 	std::vector<std::string> credits;
-	unsigned scroll;
+	double scroll;
 	int progress = 0;
 };
 

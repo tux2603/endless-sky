@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #ifndef UI_H_
 #define UI_H_
 
+#include "GlobalConstants.h"
 #include "Point.h"
 
 #include <memory>
@@ -39,6 +40,10 @@ public:
 	
 	// Step all the panels forward (advance animations, move objects, etc.).
 	void StepAll();
+
+	// TODO Adding the ability to pass a time delta to all panels at once
+	void StepAll(double deltaMS);
+
 	// Draw all the panels.
 	void DrawAll();
 	

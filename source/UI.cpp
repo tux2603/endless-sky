@@ -77,6 +77,8 @@ bool UI::Handle(const SDL_Event &event)
 			handled = (*it)->Release(x, y);
 		}
 		else if(event.type == SDL_MOUSEWHEEL)
+			// TODO: scrolling should probably be dependent on some sort of timeDelta or
+			// TODO: 	user sensitivity setting
 			handled = (*it)->Scroll(event.wheel.x, event.wheel.y);
 		else if(event.type == SDL_KEYDOWN)
 		{
@@ -101,12 +103,17 @@ bool UI::Handle(const SDL_Event &event)
 // Step all the panels forward (advance animations, move objects, etc.).
 void UI::StepAll()
 {
+	StepAll(DEFAULT_STEP_DELTA);
+}
+
+void UI::StepAll(double deltaMS)
+{
 	// Handle any queued push or pop commands.
 	PushOrPop();
 	
 	// Step all the panels.
 	for(shared_ptr<Panel> &panel : stack)
-		panel->Step();
+		panel->Step(deltaMS);
 }
 
 

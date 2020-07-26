@@ -38,7 +38,9 @@ void Panel::Step()
 {
 }
 
-
+void Panel::Step(double deltaMS)
+{
+}
 
 // Draw this panel.
 void Panel::Draw()
