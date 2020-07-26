@@ -168,7 +168,14 @@ void GameLoop(PlayerInfo &player, Conversation &conversation, bool &debugMode)
 			
 	bool showCursor = true;
 	int cursorTime = 0;
-	int frameRate = 60;
+
+	// TODO: find the maximum frame rate of a monitor and use it here
+	int maxFrameRate = 60;
+
+	// TODO: This will be modified to change the speed in chunks
+	int frameSkipCount = 1;
+
+	int frameRate = maxFrameRate;
 	FrameTimer timer(frameRate);
 	bool isPaused = false;
 	bool isFastForward = false;
@@ -256,6 +263,7 @@ void GameLoop(PlayerInfo &player, Conversation &conversation, bool &debugMode)
 			isFastForward = false;
 		
 		// Tell all the panels to step forward, then draw them.
+		// TODO: Time delta should be passed here?
 		((!isPaused && menuPanels.IsEmpty()) ? gamePanels : menuPanels).StepAll();
 		
 		// Caps lock slows the frame rate in debug mode.
@@ -270,15 +278,15 @@ void GameLoop(PlayerInfo &player, Conversation &conversation, bool &debugMode)
 		}
 		else
 		{
-			if(frameRate < 60)
+			if(frameRate < maxFrameRate)
 			{
-				frameRate = min(frameRate + 5, 60);
+				frameRate = min(frameRate + 5, maxFrameRate);
 				timer.SetFrameRate(frameRate);
 			}
 			
 			if(isFastForward && inFlight)
 			{
-				skipFrame = (skipFrame + 1) % 3;
+				skipFrame = (skipFrame + 1) % frameSkipCount;
 				if(skipFrame)
 					continue;
 			}

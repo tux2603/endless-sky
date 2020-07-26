@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #ifndef PANEL_H_
 #define PANEL_H_
 
+#include "GlobalConstants.h"
 #include "Rectangle.h"
 
 #include <functional>
@@ -39,6 +40,11 @@ public:
 	
 	// Move the state of this panel forward one game step.
 	virtual void Step();
+
+	// TODO: This is where the overloaded step function that allows for variable time deltas 
+	// TODO: is created. If the delta argument is not supplied, it will default to a value
+	// TODO: of 16.6666667 to maintain backwards compatibility
+	virtual void Step(double deltaMS);
 	
 	// Draw this panel.
 	virtual void Draw();

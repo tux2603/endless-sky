@@ -62,12 +62,20 @@ MenuPanel::MenuPanel(PlayerInfo &player, UI &gamePanels)
 
 void MenuPanel::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void MenuPanel::Step(double deltaMS) 
+{
 	if(GetUI()->IsTop(this) && alpha < 1.f)
 	{
-		++scroll;
+		// Change the scrolling rate based on the frame delta
+		scroll += deltaMS / DEFAULT_STEP_DELTA;
 		if(scroll >= (20 * credits.size() + 300) * scrollSpeed)
 			scroll = 0;
 	}
+	
+	// TODO: I don't think it's necessary to modify this with delta
 	progress = static_cast<int>(GameData::Progress() * 60.);
 	if(progress == 60 && !isReady)
 	{
@@ -76,8 +84,8 @@ void MenuPanel::Step()
 			gamePanels.Push(new MainPanel(player));
 			// It takes one step to figure out the planet panel should be created, and
 			// another step to actually place it. So, take two steps to avoid a flicker.
-			gamePanels.StepAll();
-			gamePanels.StepAll();
+			gamePanels.StepAll(deltaMS);
+			gamePanels.StepAll(deltaMS);
 		}
 		isReady = true;
 	}
@@ -139,7 +147,8 @@ void MenuPanel::Draw()
 		}
 	}
 	
-	int y = 120 - scroll / scrollSpeed;
+	// TODO: Is this cast necessary?
+	int y = static_cast<int>(120 - scroll / scrollSpeed);
 	for(const string &line : credits)
 	{
 		float fade = 1.f;
@@ -159,7 +168,7 @@ void MenuPanel::Draw()
 
 
 // New player "conversation" callback.
-void MenuPanel::OnCallback(int)
+void MenuPanel::OnCallback(int value)
 {
 	GetUI()->Pop(this);
 	gamePanels.Reset();
