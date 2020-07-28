@@ -16,6 +16,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "BankPanel.h"
 #include "Command.h"
+#include "constants.h"
 #include "ConversationPanel.h"
 #include "Dialog.h"
 #include "FontSet.h"
@@ -36,6 +37,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "UI.h"
 
 #include <sstream>
+
+#include <iostream>
 
 using namespace std;
 
@@ -66,10 +69,18 @@ PlanetPanel::PlanetPanel(PlayerInfo &player, function<void()> callback)
 
 void PlanetPanel::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void PlanetPanel::Step(double deltaMS)
+{
+	cout << "PlanetPanel Step" << endl;
+
 	// If the previous mission callback resulted in a "launch", take off now.
 	const Ship *flagship = player.Flagship();
 	if(flagship && flagship->CanBeFlagship() && (player.ShouldLaunch() || requestedLaunch))
 	{
+		cout << "Player requested launch" << endl;
 		TakeOffIfReady();
 		return;
 	}
@@ -144,8 +155,11 @@ bool PlanetPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command, b
 	const Ship *flagship = player.Flagship();
 	
 	bool hasAccess = planet.CanUseServices();
-	if(key == 'd' && flagship && flagship->CanBeFlagship())
+	if(key == 'd' && flagship && flagship->CanBeFlagship()) 
+	{
 		requestedLaunch = true;
+		cout << "Pressed d" << endl;
+	}
 	else if(key == 'l')
 	{
 		selectedPanel = nullptr;
@@ -219,7 +233,10 @@ void PlanetPanel::TakeOffIfReady()
 	// If we're currently showing a conversation or dialog, wait for it to close.
 	if(!GetUI()->IsTop(this) && !GetUI()->IsTop(trading.get()) && !GetUI()->IsTop(bank.get())
 			&& !GetUI()->IsTop(spaceport.get()) && !GetUI()->IsTop(hiring.get()))
+	{
+		cout << "Canceling launch" << endl;
 		return;
+	}
 	
 	// If something happens here that cancels the order to take off, don't try
 	// to take off until the button is clicked again.
@@ -334,6 +351,8 @@ void PlanetPanel::TakeOffIfReady()
 	
 	// There was no need to ask the player whether we can get rid of anything,
 	// so go ahead and take off.
+
+	cout << "Launching" << endl;
 	TakeOff();
 }
 

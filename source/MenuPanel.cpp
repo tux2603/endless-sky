@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "MenuPanel.h"
 
 #include "Command.h"
+#include "constants.h"
 #include "ConversationPanel.h"
 #include "Files.h"
 #include "Font.h"

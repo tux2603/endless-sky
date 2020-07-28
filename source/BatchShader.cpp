@@ -12,6 +12,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "BatchShader.h"
 
+#include "constants.h"
 #include "Screen.h"
 #include "Shader.h"
 #include "Sprite.h"
