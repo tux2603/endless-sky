@@ -38,8 +38,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include <sstream>
 
-#include <iostream>
-
 using namespace std;
 
 
@@ -74,13 +72,10 @@ void PlanetPanel::Step()
 
 void PlanetPanel::Step(double deltaMS)
 {
-	cout << "PlanetPanel Step" << endl;
-
 	// If the previous mission callback resulted in a "launch", take off now.
 	const Ship *flagship = player.Flagship();
 	if(flagship && flagship->CanBeFlagship() && (player.ShouldLaunch() || requestedLaunch))
 	{
-		cout << "Player requested launch" << endl;
 		TakeOffIfReady();
 		return;
 	}
@@ -158,7 +153,6 @@ bool PlanetPanel::KeyDown(SDL_Keycode key, Uint16 mod, const Command &command, b
 	if(key == 'd' && flagship && flagship->CanBeFlagship()) 
 	{
 		requestedLaunch = true;
-		cout << "Pressed d" << endl;
 	}
 	else if(key == 'l')
 	{
@@ -234,7 +228,6 @@ void PlanetPanel::TakeOffIfReady()
 	if(!GetUI()->IsTop(this) && !GetUI()->IsTop(trading.get()) && !GetUI()->IsTop(bank.get())
 			&& !GetUI()->IsTop(spaceport.get()) && !GetUI()->IsTop(hiring.get()))
 	{
-		cout << "Canceling launch" << endl;
 		return;
 	}
 	
@@ -351,8 +344,7 @@ void PlanetPanel::TakeOffIfReady()
 	
 	// There was no need to ask the player whether we can get rid of anything,
 	// so go ahead and take off.
-
-	cout << "Launching" << endl;
+	
 	TakeOff();
 }
 
