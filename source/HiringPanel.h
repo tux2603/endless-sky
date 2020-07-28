@@ -27,6 +27,7 @@ public:
 	explicit HiringPanel(PlayerInfo &player);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	

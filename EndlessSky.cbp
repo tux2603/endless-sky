@@ -333,7 +333,7 @@
 		<Unit filename="source/WrappedText.h" />
 		<Unit filename="source/gl_header.h" />
 		<Unit filename="source/main.cpp" />
-		<Unit filename="source/pi.h" />
+		<Unit filename="source/constants.h" />
 		<Unit filename="source/shift.h" />
 		<Extensions>
 			<code_completion />

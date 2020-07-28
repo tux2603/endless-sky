@@ -12,12 +12,12 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "PlanetLabel.h"
 
+#include "constants.h"
 #include "Angle.h"
 #include "Font.h"
 #include "FontSet.h"
 #include "Government.h"
 #include "LineShader.h"
-#include "pi.h"
 #include "Planet.h"
 #include "PointerShader.h"
 #include "RingShader.h"

@@ -13,7 +13,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #ifndef UI_H_
 #define UI_H_
 
-#include "GlobalConstants.h"
 #include "Point.h"
 
 #include <memory>

@@ -60,6 +60,11 @@ MainPanel::MainPanel(PlayerInfo &player)
 
 void MainPanel::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void MainPanel::Step(double deltaMS)
+{
 	engine.Wait();
 	
 	// Depending on what UI element is on top, the game is "paused." This
@@ -110,6 +115,7 @@ void MainPanel::Step()
 		if(isActive && !flagship->IsHyperspacing() && flagship->Position().Length() > 10000.
 				&& player.GetDate() <= GameData::Start().GetDate() + 4)
 		{
+			// TODO: I don't think a time delta will be necessary here, but it might be nice?
 			++lostness;
 			int count = 1 + lostness / 3600;
 			if(count > lostCount && count <= 7)
@@ -123,13 +129,14 @@ void MainPanel::Step()
 		}
 	}
 	
-	engine.Step(isActive);
+	engine.Step(isActive, deltaMS);
 	
 	// Splice new events onto the eventQueue for (eventual) handling. No
 	// other classes use Engine::Events() after Engine::Step() completes.
 	eventQueue.splice(eventQueue.end(), engine.Events());
 	// Handle as many ShipEvents as possible (stopping if no longer active
 	// and updating the isActive flag).
+	// TODO: Check to see if this needs a delta
 	StepEvents(isActive);
 	
 	if(isActive)
@@ -138,8 +145,6 @@ void MainPanel::Step()
 		canDrag = false;
 	canClick = isActive;
 }
-
-
 
 void MainPanel::Draw()
 {
@@ -164,11 +169,15 @@ void MainPanel::Draw()
 	
 	if(Preferences::Has("Show CPU / GPU load"))
 	{
+		// TODO: Add some sort of FPS monitor here
 		string loadString = to_string(lround(load * 100.)) + "% GPU";
 		const Color &color = *GameData::Colors().Get("medium");
 		FontSet::Get(14).Draw(loadString, Point(10., Screen::Height() * -.5 + 5.), color);
 	
 		loadSum += loadTimer.Time();
+
+		// TODO: this might require some sort of delta, but the better question is
+		// TODO: 	_why is it being run in the draw function_
 		if(++loadCount == 60)
 		{
 			load = loadSum;
@@ -439,6 +448,7 @@ bool MainPanel::ShowHailPanel()
 
 // Handle ShipEvents from this and previous Engine::Step calls. Start with the
 // oldest and then process events until any create a new UI element.
+// TODO: check to see if a time delta is necessary here
 void MainPanel::StepEvents(bool &isActive)
 {
 	while(isActive && !eventQueue.empty())

@@ -239,7 +239,7 @@ news "street vendor"
 			"With the right marinade, rat meat can be delicious. Of course, they don't let us sell the ones that were already dead when we collected them."
 			"This is my own famous delicacy, Yogurt on a Stick. No, it's not frozen yogurt. It's more like, well... congealed..."
 			"Can I interest you in some vegan falafels? Trust me, you don't want to eat any of the meat that's getting sold on this street."
-
+			"May I intrest you in a real meat sausage? Onna stick? Only half a credit each, and that's cutting me own throat! I'll even throw in some mustard."
 
 
 news "company psychologist"

@@ -69,6 +69,8 @@ public:
 	// Perform all the work that can only be done while the calculation thread
 	// is paused (for thread safety reasons).
 	void Step(bool isActive);
+	void Step(bool isActive, double deltaMS);
+
 	// Begin the next step of calculations.
 	void Go();
 	

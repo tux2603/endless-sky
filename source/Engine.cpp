@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Engine.h"
 
 #include "Audio.h"
+#include "constants.h"
 #include "Effect.h"
 #include "Files.h"
 #include "FillShader.h"
@@ -67,6 +68,7 @@ namespace {
 		if(ship.GetPersonality().IsTarget() && !ship.IsDestroyed())
 		{
 			// If a ship is a "target," double-blink it a few times per second.
+			// TODO: This blinck rate will change with game speed, right?
 			int count = (step / 6) % 7;
 			if(count == 0 || count == 2)
 				return Radar::BLINK;
@@ -427,6 +429,12 @@ void Engine::Wait()
 // Begin the next step of calculations.
 void Engine::Step(bool isActive)
 {
+	Step(isActive, DEFAULT_STEP_DELTA);
+}
+
+void Engine::Step(bool isActive, double deltaMS)
+{
+
 	events.swap(eventQueue);
 	eventQueue.clear();
 	
@@ -462,7 +470,10 @@ void Engine::Step(bool isActive)
 		else if(jumpCount > 0)
 			--jumpCount;
 	}
+
+	// TODO: This is a potential "victim" for the time delta
 	ai.UpdateEvents(events);
+
 	if(isActive)
 	{
 		HandleKeyboardInputs();
@@ -474,6 +485,8 @@ void Engine::Step(bool isActive)
 			ai.UpdateKeys(player, activeCommands);
 	}
 	wasActive = isActive;
+
+	// TODO: Another potential time delta
 	Audio::Update(center);
 	
 	// Smoothly zoom in and out.
@@ -517,6 +530,9 @@ void Engine::Step(bool isActive)
 		player.TravelPlan().push_back(flagship->GetTargetSystem());
 	if(player.HasTravelPlan() && currentSystem == player.TravelPlan().back())
 		player.PopTravel();
+
+	// Displays a flash when traveling between systems
+	// TODO: This should probably be dependent at least partially upon deltas, but it's not necessary
 	if(doFlash)
 	{
 		flash = .4;
@@ -528,6 +544,7 @@ void Engine::Step(bool isActive)
 	targets.clear();
 	
 	// Update the player's ammo amounts.
+	// TODO Why is it done this way?
 	ammo.clear();
 	if(flagship)
 		for(const auto &it : flagship->Outfits())
@@ -549,9 +566,11 @@ void Engine::Step(bool isActive)
 				ammo.emplace_back(it.first, -1);
 		}
 	
+	
 	// Display escort information for all ships of the "Escort" government,
 	// and all ships with the "escort" personality, except for fighters that
 	// are not owned by the player.
+	// TODO Why is it done this way?
 	escorts.Clear();
 	bool fleetIsJumping = (flagship && flagship->Commands().Has(Command::JUMP));
 	for(const auto &it : ships)
@@ -576,6 +595,7 @@ void Engine::Step(bool isActive)
 		}
 	
 	// Create the status overlays.
+	// TODO Why is it done this way?
 	statuses.clear();
 	if(isActive && Preferences::Has("Show status overlays"))
 		for(const auto &it : ships)
@@ -596,6 +616,7 @@ void Engine::Step(bool isActive)
 		}
 	
 	// Create the planet labels.
+	// TODO Why is it done this way?
 	labels.clear();
 	if(currentSystem && Preferences::Has("Show planet labels"))
 	{
@@ -614,6 +635,7 @@ void Engine::Step(bool isActive)
 		Messages::Add("Your ship has overheated.");
 	
 	// Clear the HUD information from the previous frame.
+	// TODO: You've gotten to here
 	info = Information();
 	if(flagship && flagship->Hull())
 	{
@@ -831,6 +853,7 @@ void Engine::Step(bool isActive)
 	// Draw crosshairs on any minables in range of the flagship's scanners.
 	double scanRange = flagship ? 100. * sqrt(flagship->Attributes().Get("asteroid scan power")) : 0.;
 	if(flagship && scanRange && !flagship->IsHyperspacing())
+	{
 		for(const shared_ptr<Minable> &minable : asteroids.Minables())
 		{
 			Point offset = minable->Position() - center;
@@ -844,9 +867,8 @@ void Engine::Step(bool isActive)
 				minable == flagship->GetTargetAsteroid() ? Radar::SPECIAL : Radar::INACTIVE,
 				3});
 		}
+	}
 }
-
-
 
 // Begin the next step of calculations.
 void Engine::Go()
