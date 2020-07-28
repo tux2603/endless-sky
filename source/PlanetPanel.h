@@ -36,6 +36,7 @@ public:
 	PlanetPanel(PlayerInfo &player, std::function<void()> callback);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	

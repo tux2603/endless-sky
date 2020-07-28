@@ -13,6 +13,8 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #ifndef HIRING_PANEL_H_
 #define HIRING_PANEL_H_
 
+
+#include "constants.h"
 #include "Panel.h"
 
 class PlayerInfo;
