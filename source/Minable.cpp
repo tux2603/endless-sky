@@ -12,13 +12,13 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "Minable.h"
 
+#include "constants.h"
 #include "DataNode.h"
 #include "Effect.h"
 #include "Flotsam.h"
 #include "GameData.h"
 #include "Mask.h"
 #include "Outfit.h"
-#include "pi.h"
 #include "Projectile.h"
 #include "Random.h"
 #include "SpriteSet.h"

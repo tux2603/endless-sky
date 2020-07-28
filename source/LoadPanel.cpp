@@ -339,6 +339,7 @@ bool LoadPanel::Hover(int x, int y)
 	// Tooltips should not pop up unless the mouse stays in one place for the
 	// full hover time. Otherwise, every time the user scrubs the mouse over the
 	// list, tooltips will appear after one second.
+	// TODO this has to be modified to use time deltas
 	if(hoverCount < HOVER_TIME)
 		hoverCount = 0;
 	

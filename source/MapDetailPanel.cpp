@@ -14,6 +14,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "Color.h"
 #include "Command.h"
+#include "constants.h"
 #include "Font.h"
 #include "FontSet.h"
 #include "Format.h"
@@ -21,7 +22,6 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Government.h"
 #include "MapOutfitterPanel.h"
 #include "MapShipyardPanel.h"
-#include "pi.h"
 #include "Planet.h"
 #include "PlayerInfo.h"
 #include "PointerShader.h"

@@ -12,12 +12,12 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "Fleet.h"
 
+#include "constants.h"
 #include "DataNode.h"
 #include "Files.h"
 #include "GameData.h"
 #include "Government.h"
 #include "Phrase.h"
-#include "pi.h"
 #include "Planet.h"
 #include "Random.h"
 #include "Ship.h"

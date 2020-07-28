@@ -34,6 +34,7 @@ public:
 	explicit MainPanel(PlayerInfo &player);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	// The planet panel calls this when it closes.

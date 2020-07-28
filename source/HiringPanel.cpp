@@ -36,10 +36,13 @@ HiringPanel::HiringPanel(PlayerInfo &player)
 
 void HiringPanel::Step()
 {
-	DoHelp("hiring");
+	Step(DEFAULT_STEP_DELTA);
 }
 
-
+void HiringPanel::Step(double deltaMS)
+{
+	DoHelp("hiring");
+}
 
 void HiringPanel::Draw()
 {
