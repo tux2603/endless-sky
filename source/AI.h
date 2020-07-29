@@ -65,6 +65,7 @@ template <class Type>
 	void ClearOrders();
 	// Issue AI commands to all ships for one game step.
 	void Step(const PlayerInfo &player, Command &activeCommands);
+	void Step(const PlayerInfo &player, Command &activeCommands, double deltaMS);
 	
 	// Get the in-system strength of each government's allies and enemies.
 	int64_t AllyStrength(const Government *government);

@@ -101,7 +101,14 @@ Projectile::Projectile(Point position, const Weapon *weapon)
 // This returns false if it is time to delete this projectile.
 void Projectile::Move(vector<Visual> &visuals, vector<Projectile> &projectiles)
 {
-	if(--lifetime <= 0)
+	Move(visuals, projectiles, DEFAULT_STEP_DELTA);
+}
+
+void Projectile::Move(vector<Visual> &visuals, vector<Projectile> &projectiles, double deltaMS)
+{
+	lifetime -= deltaMS / DEFAULT_STEP_DELTA;
+
+	if(lifetime <= 0)
 	{
 		if(lifetime > -100)
 		{
@@ -119,6 +126,7 @@ void Projectile::Move(vector<Visual> &visuals, vector<Projectile> &projectiles)
 		return;
 	}
 	for(const auto &it : weapon->LiveEffects())
+		// TODO: probably want to scale this probability with the step delta
 		if(!Random::Int(it.second))
 			visuals.emplace_back(*it.first, position, velocity, angle);
 	
@@ -139,8 +147,11 @@ void Projectile::Move(vector<Visual> &visuals, vector<Projectile> &projectiles)
 	double turn = weapon->Turn();
 	double accel = weapon->Acceleration();
 	int homing = weapon->Homing();
-	if(target && homing && !Random::Int(60))
+
+	// Checks lock more or less once a second
+	if(target && homing && deltaMS != 0 && !Random::Int(static_cast<int>(1000/deltaMS)))
 		CheckLock(*target);
+
 	if(target && homing && hasLock)
 	{
 		// Vector d is the direction we want to turn towards.
@@ -204,15 +215,15 @@ void Projectile::Move(vector<Visual> &visuals, vector<Projectile> &projectiles)
 		turn = 0.;
 	
 	if(turn)
-		angle += Angle(turn);
+		angle += Angle(turn * deltaMS / DEFAULT_STEP_DELTA);
 	
 	if(accel)
 	{
-		velocity *= 1. - weapon->Drag();
-		velocity += accel * angle.Unit();
+		velocity *= (1. - weapon->Drag()) * (deltaMS / DEFAULT_STEP_DELTA);
+		velocity += (accel * angle.Unit()) * (deltaMS / DEFAULT_STEP_DELTA);
 	}
 	
-	position += velocity;
+	position += velocity * (deltaMS / DEFAULT_STEP_DELTA);
 	
 	// If this projectile is now within its "split range," it should split into
 	// sub-munitions next turn.

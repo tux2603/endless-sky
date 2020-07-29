@@ -475,6 +475,12 @@ void AI::ClearOrders()
 
 void AI::Step(const PlayerInfo &player, Command &activeCommands)
 {
+	Step(player, activeCommands, DEFAULT_STEP_DELTA);
+}
+
+// TODO: Finsih implementing this
+void AI::Step(const PlayerInfo &player, Command &activeCommands, double deltaMS)
+{
 	// First, figure out the comparative strengths of the present governments.
 	const System *playerSystem = player.GetSystem();
 	map<const Government *, int64_t> strength;

@@ -73,6 +73,7 @@ public:
 
 	// Begin the next step of calculations.
 	void Go();
+	void Go(double deltaMS);
 	
 	// Get any special events that happened in this step.
 	// MainPanel::Step will clear this list.
@@ -94,9 +95,12 @@ private:
 	void CalculateStep();
 	
 	void MoveShip(const std::shared_ptr<Ship> &ship);
+	void MoveShip(const std::shared_ptr<Ship> &ship, double deltaMS);
 	
 	void SpawnFleets();
+	void SpawnFleets(double deltaMS);
 	void SpawnPersons();
+	void SpawnPersons(double deltaMS);
 	void SendHails();
 	void HandleKeyboardInputs();
 	void HandleMouseClicks();
@@ -189,6 +193,7 @@ private:
 	float highlightFrame = 0.f;
 	
 	int step = 0;
+	double stepDeltaMS = 0;
 	
 	std::list<ShipEvent> eventQueue;
 	std::list<ShipEvent> events;

@@ -147,17 +147,22 @@ int Hardpoint::BurstRemaining() const
 // Perform one step (i.e. decrement the reload count).
 void Hardpoint::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void Hardpoint::Step(double deltaMS)
+{
 	if(!outfit)
 		return;
 	
 	wasFiring = isFiring;
 	if(reload > 0.)
-		--reload;
+		reload -= deltaMS / DEFAULT_STEP_DELTA;
 	// If the full reload time is elapsed, reset the burst counter.
 	if(reload <= 0.)
 		burstCount = outfit->BurstCount();
 	if(burstReload > 0.)
-		--burstReload;
+		burstReload -= deltaMS / DEFAULT_STEP_DELTA;
 	// If the burst reload time has elapsed, this weapon will not count as firing
 	// continuously if it is not fired this frame.
 	if(burstReload <= 0.)

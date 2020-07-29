@@ -70,6 +70,7 @@ public:
 	
 	// Update the reload counters.
 	void Step(const Ship &ship);
+	void Step(const Ship &ship, double deltaMS);
 	
 	
 private:

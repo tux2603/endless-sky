@@ -56,6 +56,7 @@ public:
 	// will "explode" instead of moving, creating flotsam and explosion effects.
 	// In that case it will return false, meaning it should be deleted.
 	bool Move(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam);
+	bool Move(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam, double deltaMS);
 	
 	// Damage this object (because a projectile collided with it).
 	void TakeDamage(const Projectile &projectile);

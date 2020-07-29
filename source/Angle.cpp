@@ -124,6 +124,19 @@ Angle Angle::operator-() const
 }
 
 
+Angle &Angle::operator*=(const double &other)
+{
+	angle *= other;
+	angle &= MASK;
+	return *this;
+}
+
+Angle Angle::operator*(const double &other) const
+{
+	Angle result = *this;
+	result *= other;
+	return result;
+}
 
 // Get a unit vector in the direction of this angle.
 Point Angle::Unit() const

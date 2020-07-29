@@ -52,6 +52,7 @@ public:
 	
 	// Move the projectile. It may create effects or submunitions.
 	void Move(std::vector<Visual> &visuals, std::vector<Projectile> &projectiles);
+	void Move(std::vector<Visual> &visuals, std::vector<Projectile> &projectiles, double deltaMS);
 	// This projectile hit something. Create the explosion, if any. This also
 	// marks the projectile as needing deletion.
 	void Explode(std::vector<Visual> &visuals, double intersection, Point hitVelocity = Point());
@@ -86,7 +87,7 @@ private:
 	const Government *targetGovernment = nullptr;
 	
 	double clip = 1.;
-	int lifetime = 0;
+	double lifetime = 0;
 	bool hasLock = true;
 };
 

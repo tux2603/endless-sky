@@ -130,6 +130,11 @@ void Minable::Place(double energy, double beltRadius)
 // In that case it will return false, meaning it should be deleted.
 bool Minable::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam)
 {
+	Move(visuals, flotsam, DEFAULT_STEP_DELTA);
+}
+
+bool Minable::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam, double deltaMS)
+{
 	if(hull < 0)
 	{
 		// This object has been destroyed. Create explosions and flotsam.
@@ -158,10 +163,10 @@ bool Minable::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam)
 	}
 	
 	// Spin the object.
-	angle += spin;
+	angle += spin * (deltaMS / DEFAULT_STEP_DELTA);
 	
 	// Advance the object forward one step.
-	theta += angularMomentum / (radius * radius);
+	theta += (angularMomentum * deltaMS) / (radius * radius * DEFAULT_STEP_DELTA);
 	radius = scale / (1. + eccentricity * cos(theta));
 	
 	// Calculate the new position.

@@ -45,6 +45,8 @@ public:
 	Angle operator-(const Angle &other) const;
 	Angle &operator-=(const Angle &other);
 	Angle operator-() const;
+	Angle operator*(const double &other) const;
+	Angle &operator*=(const double &other);
 	
 	// Get a unit vector in the direction of this angle.
 	Point Unit() const;
