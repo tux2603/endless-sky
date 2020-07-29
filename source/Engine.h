@@ -102,6 +102,7 @@ private:
 	void SpawnPersons();
 	void SpawnPersons(double deltaMS);
 	void SendHails();
+	void SendHails(double deltaMS);
 	void HandleKeyboardInputs();
 	void HandleMouseClicks();
 	
@@ -112,6 +113,7 @@ private:
 	void DoScanning(const std::shared_ptr<Ship> &ship);
 	
 	void FillRadar();
+	void FillRadar(double deltaMS);
 	
 	void AddSprites(const Ship &ship);
 	
@@ -199,11 +201,11 @@ private:
 	std::list<ShipEvent> events;
 	// Keep track of who has asked for help in fighting whom.
 	std::map<const Government *, std::weak_ptr<const Ship>> grudge;
-	int grudgeTime = 0;
+	double grudgeTime = 0;
 	
 	CollisionSet shipCollisions;
 	
-	int alarmTime = 0;
+	double alarmTime = 0;
 	double flash = 0.;
 	bool doFlash = false;
 	bool doEnter = false;
@@ -231,7 +233,7 @@ private:
 	double zoom = 1.;
 	
 	double load = 0.;
-	int loadCount = 0;
+	double loadCount = 0;
 	double loadSum = 0.;
 };
 
