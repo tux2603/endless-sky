@@ -40,6 +40,7 @@ public:
 	
 	// Step the effect forward.
 	void Move();
+	void Move(double deltaMS);
 	
 	
 private:

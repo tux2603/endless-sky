@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Visual.h"
 
 #include "Audio.h"
+#include "constants.h"
 #include "Effect.h"
 #include "Random.h"
 
@@ -47,11 +48,16 @@ Visual::Visual(const Effect &effect, Point pos, Point vel, Angle facing, Point h
 // Step the effect forward.
 void Visual::Move()
 {
+	Move(DEFAULT_STEP_DELTA);
+}
+
+void Visual::Move(double deltaMS)
+{
 	if(lifetime-- <= 0)
 		MarkForRemoval();
 	else
 	{
-		position += velocity;
-		angle += spin;
+		position += velocity * (deltaMS / DEFAULT_STEP_DELTA);
+		angle += spin * (deltaMS / DEFAULT_STEP_DELTA);
 	}
 }

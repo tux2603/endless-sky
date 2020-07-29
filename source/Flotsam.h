@@ -52,6 +52,7 @@ public:
 	
 	// Move the object one time-step forward.
 	void Move(std::vector<Visual> &visuals);
+	void Move(std::vector<Visual> &visuals, double deltaMS);
 	
 	// This is the one ship that cannot pick up this flotsam.
 	const Ship *Source() const;
@@ -75,7 +76,7 @@ public:
 	
 private:
 	Angle spin;
-	int lifetime = 0;
+	double lifetime = 0;
 	
 	const Ship *source = nullptr;
 	std::string commodity;

@@ -12,6 +12,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "AsteroidField.h"
 
+#include "constants.h"
 #include "DrawList.h"
 #include "Mask.h"
 #include "Minable.h"
@@ -80,11 +81,16 @@ void AsteroidField::Add(const Minable *minable, int count, double energy, double
 // Move all the asteroids forward one step.
 void AsteroidField::Step(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam, int step)
 {
+	Step(visuals, flotsam, step, DEFAULT_STEP_DELTA);
+}
+
+void AsteroidField::Step(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam, int step, double deltaMS)
+{
 	asteroidCollisions.Clear(step);
 	for(Asteroid &asteroid : asteroids)
 	{
 		asteroidCollisions.Add(asteroid);
-		asteroid.Step();
+		asteroid.Step(deltaMS);
 	}
 	asteroidCollisions.Finish();
 	
@@ -94,7 +100,7 @@ void AsteroidField::Step(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flo
 	auto it = minables.begin();
 	while(it != minables.end())
 	{
-		if((*it)->Move(visuals, flotsam))
+		if((*it)->Move(visuals, flotsam, deltaMS))
 		{
 			minableCollisions.Add(**it);
 			++it;
@@ -164,7 +170,7 @@ Body *AsteroidField::Collide(const Projectile &projectile, double *closestHit)
 
 
 
-// Get the list of mainable asteroids.
+// Get the list of minable asteroids.
 const list<shared_ptr<Minable>> &AsteroidField::Minables() const
 {
 	return minables;
@@ -203,8 +209,13 @@ AsteroidField::Asteroid::Asteroid(const Sprite *sprite, double energy)
 // Move the asteroid forward one time step.
 void AsteroidField::Asteroid::Step()
 {
-	angle += spin;
-	position += velocity;
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void AsteroidField::Asteroid::Step(double deltaMS)
+{
+	angle += spin * (deltaMS / DEFAULT_STEP_DELTA);
+	position += velocity * (deltaMS / DEFAULT_STEP_DELTA);
 	
 	// Keep the position within the wrap square.
 	if(position.X() < 0.)

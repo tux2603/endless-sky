@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Flotsam.h"
 
 #include "Angle.h"
+#include "constants.h"
 #include "Effect.h"
 #include "GameData.h"
 #include "Outfit.h"
@@ -94,9 +95,14 @@ void Flotsam::Place(const Body &source, const Point &dv)
 // Move the object one time-step forward.
 void Flotsam::Move(vector<Visual> &visuals)
 {
-	position += velocity;
-	angle += spin;
-	--lifetime;
+	Move(visuals, DEFAULT_STEP_DELTA);
+}
+
+void Flotsam::Move(vector<Visual> &visuals, double deltaMS)
+{
+	position += velocity * (deltaMS / DEFAULT_STEP_DELTA);
+	angle += spin * (deltaMS / DEFAULT_STEP_DELTA);
+	lifetime -= deltaMS / DEFAULT_STEP_DELTA;
 	if(lifetime > 0)
 		return;
 	

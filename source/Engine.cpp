@@ -627,7 +627,6 @@ void Engine::Step(bool isActive, double deltaMS)
 		Messages::Add("Your ship has overheated.");
 	
 	// Clear the HUD information from the previous frame.
-	// TODO: You've gotten to here
 	info = Information();
 	if(flagship && flagship->Hull())
 	{
@@ -865,15 +864,19 @@ void Engine::Step(bool isActive, double deltaMS)
 // Begin the next step of calculations.
 void Engine::Go()
 {
+	Go(DEFAULT_STEP_DELTA);
+}
+
+void Engine::Go(double deltaMS)
+{
 	{
 		unique_lock<mutex> lock(swapMutex);
 		++step;
+		stepDeltaMS = deltaMS;
 		drawTickTock = !drawTickTock;
 	}
 	condition.notify_all();
 }
-
-
 
 // Pass the list of game events to MainPanel for handling by the player, and any
 // UI element generation.
@@ -1251,7 +1254,6 @@ void Engine::ThreadEntryPoint()
 }
 
 
-
 void Engine::CalculateStep()
 {
 	FrameTimer loadTimer;
@@ -1265,7 +1267,7 @@ void Engine::CalculateStep()
 		return;
 	
 	// Now, all the ships must decide what they are doing next.
-	ai.Step(player, activeCommands);
+	ai.Step(player, activeCommands, stepDeltaMS);
 	
 	// Clear the active players commands, they are all processed at this point.
 	activeCommands.Clear();
@@ -1285,7 +1287,7 @@ void Engine::CalculateStep()
 	bool wasHyperspacing = (flagship && flagship->IsEnteringHyperspace());
 	// Move all the ships.
 	for(const shared_ptr<Ship> &it : ships)
-		MoveShip(it);
+		MoveShip(it, stepDeltaMS);
 	// If the flagship just began jumping, play the appropriate sound.
 	if(!wasHyperspacing && flagship && flagship->IsEnteringHyperspace())
 		Audio::Play(Audio::Get(flagship->IsUsingJumpDrive() ? "jump drive" : "hyperdrive"));
@@ -1313,21 +1315,22 @@ void Engine::CalculateStep()
 	// Move the flotsam. This must happen after the ships move, because flotsam
 	// checks if any ship has picked it up.
 	for(const shared_ptr<Flotsam> &it : flotsam)
-		it->Move(newVisuals);
+		it->Move(newVisuals, stepDeltaMS);
 	Prune(flotsam);
 	
 	// Move the projectiles.
 	for(Projectile &projectile : projectiles)
-		projectile.Move(newVisuals, newProjectiles);
+		projectile.Move(newVisuals, newProjectiles, stepDeltaMS);
 	Prune(projectiles);
 	
 	// Move the visuals.
 	for(Visual &visual : visuals)
-		visual.Move();
+		visual.Move(stepDeltaMS);
 	Prune(visuals);
 	
 	// Perform various minor actions.
-	SpawnFleets();
+	SpawnFleets(stepDeltaMS);
+	// TODO Made it to here
 	SpawnPersons();
 	SendHails();
 	HandleMouseClicks();
@@ -1470,6 +1473,11 @@ void Engine::CalculateStep()
 // boarding events, fire weapons, and launch fighters.
 void Engine::MoveShip(const shared_ptr<Ship> &ship)
 {
+	MoveShip(ship, DEFAULT_STEP_DELTA);
+}
+
+void Engine::MoveShip(const shared_ptr<Ship> &ship, double deltaMS)
+{
 	const Ship *flagship = player.Flagship();
 	
 	bool isJump = ship->IsUsingJumpDrive();
@@ -1477,7 +1485,7 @@ void Engine::MoveShip(const shared_ptr<Ship> &ship)
 	bool wasHyperspacing = ship->IsHyperspacing();
 	// Give the ship the list of visuals so that it can draw explosions,
 	// ion sparks, jump drive flashes, etc.
-	ship->Move(newVisuals, newFlotsam);
+	ship->Move(newVisuals, newFlotsam, deltaMS);
 	// Bail out if the ship just died.
 	if(ship->ShouldBeRemoved())
 	{
@@ -1528,11 +1536,9 @@ void Engine::MoveShip(const shared_ptr<Ship> &ship)
 	
 	// Fire weapons. If this returns true the ship has at least one anti-missile
 	// system ready to fire.
-	if(ship->Fire(newProjectiles, newVisuals))
+	if(ship->Fire(newProjectiles, newVisuals, deltaMS))
 		hasAntiMissile.push_back(ship.get());
 }
-
-
 
 // Populate the ship collision detection set for projectile & flotsam computations.
 void Engine::FillCollisionSets()
@@ -1552,6 +1558,11 @@ void Engine::FillCollisionSets()
 // mission NPCs are only spawned in or adjacent to the player's system.
 void Engine::SpawnFleets()
 {
+	SpawnFleets(DEFAULT_STEP_DELTA);
+}
+
+void Engine::SpawnFleets(double deltaMS)
+{
 	// If the player has a pending boarding mission, spawn its NPCs.
 	if(player.ActiveBoardingMission())
 	{
@@ -1562,7 +1573,7 @@ void Engine::SpawnFleets()
 	// Non-mission NPCs spawn at random intervals in neighboring systems,
 	// or coming from planets in the current one.
 	for(const System::FleetProbability &fleet : player.GetSystem()->Fleets())
-		if(!Random::Int(fleet.Period()))
+		if(deltaMS != 0 && !Random::Int(static_cast<int>(fleet.Period() * DEFAULT_STEP_DELTA / deltaMS)))
 		{
 			const Government *gov = fleet.Get()->GetGovernment();
 			if(!gov)

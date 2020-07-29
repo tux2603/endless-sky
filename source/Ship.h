@@ -181,6 +181,7 @@ public:
 	// Move this ship. A ship may create effects as it moves, in particular if
 	// it is in the process of blowing up.
 	void Move(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam);
+	void Move(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam, double deltaMS);
 	// Generate energy, heat, etc. (This is called by Move().)
 	void DoGeneration();
 	// Launch any ships that are ready to launch.
@@ -200,6 +201,7 @@ public:
 	// instead of firing here this function returns true and it can be fired if
 	// collision detection finds a missile in range.
 	bool Fire(std::vector<Projectile> &projectiles, std::vector<Visual> &visuals);
+	bool Fire(std::vector<Projectile> &projectiles, std::vector<Visual> &visuals, double deltaMS);
 	// Fire an anti-missile. Returns true if the missile was killed.
 	bool FireAntiMissile(const Projectile &projectile, std::vector<Visual> &visuals);
 	

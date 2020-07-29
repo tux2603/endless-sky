@@ -15,6 +15,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Audio.h"
 #include "DataNode.h"
 #include "DataWriter.h"
+#include "constants.h"
 #include "Effect.h"
 #include "Files.h"
 #include "Flotsam.h"
@@ -253,7 +254,7 @@ void Ship::Load(const DataNode &node)
 		else if(((key == "fighter" || key == "drone") && child.Size() >= 3) ||
 			(key == "bay" && child.Size() >= 4))
 		{
-			// While the `drone` and `fighter` keywords are supported for backwards compatiblity, the
+			// While the `drone` and `fighter` keywords are supported for backwards compatibility, the
 			// standard format is `bay <ship-category>`, with the same signature for other values.
 			string category = "Fighter";
 			int childOffset = 0;
@@ -1122,6 +1123,12 @@ const Command &Ship::Commands() const
 // should be deleted.
 void Ship::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam)
 {
+	Move(visuals, flotsam, DEFAULT_STEP_DELTA);
+}
+
+// TODO implement this
+void Ship::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam, double deltaMS)
+{
 	// Check if this ship has been in a different system from the player for so
 	// long that it should be "forgotten." Also eliminate ships that have no
 	// system set because they just entered a fighter bay.
@@ -1324,7 +1331,7 @@ void Ship::Move(vector<Visual> &visuals, list<shared_ptr<Flotsam>> &flotsam)
 			direction = -1;
 			
 			// If you have a target planet in the destination system, exit
-			// hyperpace aimed at it. Otherwise, target the first planet that
+			// hyperspace aimed at it. Otherwise, target the first planet that
 			// has a spaceport.
 			Point target;
 			if(targetPlanet)
@@ -2085,6 +2092,11 @@ double Ship::OutfitScanFraction() const
 // collision detection finds a missile in range.
 bool Ship::Fire(vector<Projectile> &projectiles, vector<Visual> &visuals)
 {
+	Fire(projectiles, visuals, DEFAULT_STEP_DELTA);
+}
+
+bool Ship::Fire(vector<Projectile> &projectiles, vector<Visual> &visuals, double deltaMS)
+{
 	isInSystem = true;
 	forget = 0;
 	
@@ -2111,7 +2123,7 @@ bool Ship::Fire(vector<Projectile> &projectiles, vector<Visual> &visuals)
 		}
 	}
 	
-	armament.Step(*this);
+	armament.Step(*this, deltaMS);
 	
 	return antiMissileRange;
 }
@@ -2655,7 +2667,7 @@ double Ship::JumpDriveFuel() const
 
 double Ship::JumpFuelMissing() const
 {
-	// Used for smart refuelling: transfer only as much as really needed
+	// Used for smart refueling: transfer only as much as really needed
 	// includes checking if fuel cap is high enough at all
 	double jumpFuel = JumpFuel(targetSystem);
 	if(!jumpFuel || fuel > jumpFuel || jumpFuel > attributes.Get("fuel capacity"))

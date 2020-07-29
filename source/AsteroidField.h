@@ -52,6 +52,8 @@ public:
 	
 	// Move all the asteroids forward one time step, and populate the asteroid and minable collision sets.
 	void Step(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam, int step);
+	void Step(std::vector<Visual> &visuals, std::list<std::shared_ptr<Flotsam>> &flotsam, int step, double deltaMS);
+
 	// Draw the asteroid field, with the field of view centered on the given point.
 	void Draw(DrawList &draw, const Point &center, double zoom) const;
 	// Check if the given projectile has hit any of the asteroids, using the information
@@ -70,6 +72,7 @@ private:
 		Asteroid(const Sprite *sprite, double energy);
 		
 		void Step();
+		void Step(double deltaMS);
 		void Draw(DrawList &draw, const Point &center, double zoom) const;
 		
 	private:

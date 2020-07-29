@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "Armament.h"
 
 #include "Command.h"
+#include "constants.h"
 #include "Files.h"
 #include "Outfit.h"
 #include "Ship.h"
@@ -231,8 +232,14 @@ bool Armament::FireAntiMissile(int index, Ship &ship, const Projectile &projecti
 // Update the reload counters.
 void Armament::Step(const Ship &ship)
 {
+	Step(ship, DEFAULT_STEP_DELTA);
+}
+
+
+void Armament::Step(const Ship &ship, double deltaMS)
+{
 	for(Hardpoint &hardpoint : hardpoints)
-		hardpoint.Step();
+		hardpoint.Step(deltaMS);
 	
 	for(auto &it : streamReload)
 	{
