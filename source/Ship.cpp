@@ -2092,7 +2092,7 @@ double Ship::OutfitScanFraction() const
 // collision detection finds a missile in range.
 bool Ship::Fire(vector<Projectile> &projectiles, vector<Visual> &visuals)
 {
-	Fire(projectiles, visuals, DEFAULT_STEP_DELTA);
+	return Fire(projectiles, visuals, DEFAULT_STEP_DELTA);
 }
 
 bool Ship::Fire(vector<Projectile> &projectiles, vector<Visual> &visuals, double deltaMS)

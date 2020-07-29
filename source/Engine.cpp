@@ -68,7 +68,7 @@ namespace {
 		if(ship.GetPersonality().IsTarget() && !ship.IsDestroyed())
 		{
 			// If a ship is a "target," double-blink it a few times per second.
-			// TODO: This blinck rate will change with game speed, right?
+			// TODO: This blink rate will change with game speed, right?
 			int count = (step / 6) % 7;
 			if(count == 0 || count == 2)
 				return Radar::BLINK;
@@ -536,7 +536,6 @@ void Engine::Step(bool isActive, double deltaMS)
 	targets.clear();
 	
 	// Update the player's ammo amounts.
-	// TODO Why is it done this way?
 	ammo.clear();
 	if(flagship)
 		for(const auto &it : flagship->Outfits())
@@ -562,7 +561,6 @@ void Engine::Step(bool isActive, double deltaMS)
 	// Display escort information for all ships of the "Escort" government,
 	// and all ships with the "escort" personality, except for fighters that
 	// are not owned by the player.
-	// TODO Why is it done this way?
 	escorts.Clear();
 	bool fleetIsJumping = (flagship && flagship->Commands().Has(Command::JUMP));
 	for(const auto &it : ships)
@@ -587,7 +585,6 @@ void Engine::Step(bool isActive, double deltaMS)
 		}
 	
 	// Create the status overlays.
-	// TODO Why is it done this way?
 	statuses.clear();
 	if(isActive && Preferences::Has("Show status overlays"))
 		for(const auto &it : ships)
@@ -608,7 +605,6 @@ void Engine::Step(bool isActive, double deltaMS)
 		}
 	
 	// Create the planet labels.
-	// TODO Why is it done this way?
 	labels.clear();
 	if(currentSystem && Preferences::Has("Show planet labels"))
 	{
@@ -1330,9 +1326,8 @@ void Engine::CalculateStep()
 	
 	// Perform various minor actions.
 	SpawnFleets(stepDeltaMS);
-	// TODO Made it to here
-	SpawnPersons();
-	SendHails();
+	SpawnPersons(stepDeltaMS);
+	SendHails(stepDeltaMS);
 	HandleMouseClicks();
 	
 	// Now, take the new objects that were generated this step and splice them
@@ -1347,12 +1342,13 @@ void Engine::CalculateStep()
 	
 	// Decrement the count of how long it's been since a ship last asked for help.
 	if(grudgeTime)
-		--grudgeTime;
+		grudgeTime -= stepDeltaMS / DEFAULT_STEP_DELTA;
 	
 	// Populate the collision detection lookup sets.
 	FillCollisionSets();
 	
 	// Perform collision detection.
+	// TODO: I have a feeling that this will need a time delta fed into it, but I will have to see...
 	for(Projectile &projectile : projectiles)
 		DoCollisions(projectile);
 	// Now that collision detection is done, clear the cache of ships with anti-
@@ -1380,7 +1376,7 @@ void Engine::CalculateStep()
 	radar[calcTickTock].SetCenter(newCenter);
 	
 	// Populate the radar.
-	FillRadar();
+	FillRadar(stepDeltaMS);
 	
 	// Draw the planets.
 	for(const StellarObject &object : playerSystem->Objects())
@@ -1458,8 +1454,10 @@ void Engine::CalculateStep()
 		batchDraw[calcTickTock].AddVisual(visual);
 	
 	// Keep track of how much of the CPU time we are using.
+	// TODO: This could get interesting/inaccurate with future changes
 	loadSum += loadTimer.Time();
-	if(++loadCount == 60)
+	loadCount += stepDeltaMS / DEFAULT_STEP_DELTA;
+	if(loadCount >= 60)
 	{
 		load = loadSum;
 		loadSum = 0.;
@@ -1595,7 +1593,12 @@ void Engine::SpawnFleets(double deltaMS)
 // At random intervals, create new special "persons" who enter the current system.
 void Engine::SpawnPersons()
 {
-	if(Random::Int(36000) || player.GetSystem()->Links().empty())
+	SpawnPersons(DEFAULT_STEP_DELTA);
+}
+
+void Engine::SpawnPersons(double deltaMS)
+{
+	if(deltaMS == 0 || Random::Int(static_cast<int>(36000*DEFAULT_STEP_DELTA/deltaMS)) || player.GetSystem()->Links().empty())
 		return;
 	
 	// Loop through all persons once to see if there are any who can enter
@@ -1648,7 +1651,12 @@ void Engine::SpawnPersons()
 // At random intervals, have one of the ships in the game send you a hail.
 void Engine::SendHails()
 {
-	if(Random::Int(600) || player.IsDead() || ships.empty())
+	SendHails(DEFAULT_STEP_DELTA);
+}
+
+void Engine::SendHails(double deltaMS)
+{
+	if(deltaMS == 0 || Random::Int(static_cast<int>(600 * DEFAULT_STEP_DELTA / deltaMS)) || player.IsDead() || ships.empty())
 		return;
 	
 	shared_ptr<Ship> source;
@@ -2031,6 +2039,11 @@ void Engine::DoScanning(const shared_ptr<Ship> &ship)
 // Fill in all the objects in the radar display.
 void Engine::FillRadar()
 {
+	FillRadar(DEFAULT_STEP_DELTA);
+}
+
+void Engine::FillRadar(double deltaMS)
+{
 	const Ship *flagship = player.Flagship();
 	const System *playerSystem = player.GetSystem();
 	
@@ -2086,8 +2099,8 @@ void Engine::FillRadar()
 				&& ship->GetTargetShip() && ship->GetTargetShip()->IsYours());
 		}
 	// If hostile ships have appeared, play the siren.
-	if(alarmTime)
-		--alarmTime;
+	if(alarmTime > 0 && deltaMS != 0)
+		alarmTime -= DEFAULT_STEP_DELTA / deltaMS;
 	else if(hasHostiles && !hadHostiles)
 	{
 		if(Preferences::Has("Warning siren"))
