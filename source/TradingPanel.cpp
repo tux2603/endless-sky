@@ -14,6 +14,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
 #include "Color.h"
 #include "Command.h"
+#include "constants.h"
 #include "FillShader.h"
 #include "Font.h"
 #include "FontSet.h"
@@ -85,8 +86,14 @@ TradingPanel::~TradingPanel()
 	
 void TradingPanel::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void TradingPanel::Step(double deltaMS)
+{
 	DoHelp("trading");
 }
+
 
 
 

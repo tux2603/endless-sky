@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "PlayerInfoPanel.h"
 
 #include "Command.h"
+#include "constants.h"
 #include "Font.h"
 #include "FontSet.h"
 #include "Format.h"
@@ -105,6 +106,11 @@ PlayerInfoPanel::PlayerInfoPanel(PlayerInfo &player)
 
 
 void PlayerInfoPanel::Step()
+{
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void PlayerInfoPanel::Step(double deltaMS)
 {
 	// If the player has acquired a second ship for the first time, explain to
 	// them how to reorder the ships in their fleet.

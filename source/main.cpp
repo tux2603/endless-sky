@@ -173,7 +173,7 @@ void GameLoop(PlayerInfo &player, Conversation &conversation, bool &debugMode)
 	int maxFrameRate = 60;
 
 	// TODO: This will be modified to change the speed in chunks
-	int frameSkipCount = 1;
+	int frameSkipCount = 3;
 
 	int frameRate = maxFrameRate;
 	FrameTimer timer(frameRate);

@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "SpaceportPanel.h"
 
 #include "Color.h"
+#include "constants.h"
 #include "FontSet.h"
 #include "GameData.h"
 #include "Interface.h"
@@ -75,6 +76,11 @@ void SpaceportPanel::UpdateNews()
 
 
 void SpaceportPanel::Step()
+{
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void SpaceportPanel::Step(double deltaMS)
 {
 	if(GetUI()->IsTop(this))
 	{

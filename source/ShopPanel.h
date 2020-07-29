@@ -39,6 +39,7 @@ public:
 	ShopPanel(PlayerInfo &player, bool isOutfitter);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 protected:

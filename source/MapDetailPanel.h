@@ -35,6 +35,7 @@ public:
 	explicit MapDetailPanel(const MapPanel &panel);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	

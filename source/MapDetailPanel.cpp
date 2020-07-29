@@ -93,7 +93,12 @@ MapDetailPanel::MapDetailPanel(const MapPanel &panel)
 
 void MapDetailPanel::Step()
 {
-	MapPanel::Step();
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void MapDetailPanel::Step(double deltaMS)
+{
+	MapPanel::Step(deltaMS);
 	if(!player.GetPlanet())
 		DoHelp("map");
 }

@@ -58,6 +58,7 @@ public:
 	explicit MapPanel(PlayerInfo &player, int commodity = SHOW_REPUTATION, const System *special = nullptr);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	void DrawButtons(const std::string &condition);

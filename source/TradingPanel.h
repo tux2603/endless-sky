@@ -30,6 +30,7 @@ public:
 	~TradingPanel();
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	

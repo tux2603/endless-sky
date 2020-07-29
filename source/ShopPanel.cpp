@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "ShopPanel.h"
 
 #include "Color.h"
+#include "constants.h"
 #include "FillShader.h"
 #include "Font.h"
 #include "FontSet.h"
@@ -70,6 +71,11 @@ ShopPanel::ShopPanel(PlayerInfo &player, bool isOutfitter)
 
 
 void ShopPanel::Step()
+{
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void ShopPanel::Step(double deltaMS)
 {
 	// If the player has acquired a second ship for the first time, explain to
 	// them how to reorder the ships in their fleet.

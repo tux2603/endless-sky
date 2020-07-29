@@ -13,6 +13,7 @@ PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 #include "MapPanel.h"
 
 #include "Angle.h"
+#include "constants.h"
 #include "Dialog.h"
 #include "FillShader.h"
 #include "FogShader.h"
@@ -124,6 +125,12 @@ MapPanel::MapPanel(PlayerInfo &player, int commodity, const System *special)
 
 void MapPanel::Step()
 {
+	Step(DEFAULT_STEP_DELTA);
+}
+
+void MapPanel::Step(double deltaMS)
+{
+	// TODO This might be necessary to scale at some point, but is non-critical
 	if(recentering > 0)
 	{
 		double step = (recentering - .5) / RECENTER_TIME;

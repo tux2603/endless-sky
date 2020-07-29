@@ -34,6 +34,7 @@ public:
 	explicit PlayerInfoPanel(PlayerInfo &player);
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	// The player info panel allow fast-forward to stay active.

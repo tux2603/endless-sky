@@ -34,6 +34,7 @@ public:
 	void UpdateNews();
 	
 	virtual void Step() override;
+	virtual void Step(double deltaMS) override;
 	virtual void Draw() override;
 	
 	
