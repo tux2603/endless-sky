@@ -141,7 +141,7 @@ void MainPanel::Step(double deltaMS)
 	StepEvents(isActive);
 	
 	if(isActive)
-		engine.Go();
+		engine.Go(deltaMS);
 	else
 		canDrag = false;
 	canClick = isActive;
